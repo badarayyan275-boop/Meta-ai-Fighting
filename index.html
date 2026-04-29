@@ -3,66 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>META AI FIGHTING - Official Game</title>
+    <title>META AI FIGHTING - Pakistan Game</title>
     <style>
-        body {
-            background: #0a0a0a;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
-        }
-        h1 { 
-            color: #00ff88; 
-            font-size: 28px;
-            margin-top: 30px;
-        }
-        p { 
-            color: #ccc; 
-            font-size: 16px;
-        }
-        .btn {
-            background: #00ff88;
-            color: black;
-            padding: 15px 25px;
-            border: none;
-            border-radius: 10px;
-            margin: 8px;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        .download { 
-            background: #ff0066; 
-            color: white; 
-            width: 85%;
-            margin-top: 20px;
-        }
-        .box {
-            background: #222;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-        }
+        body { background:#0a0a0a; color:white; font-family:Arial; text-align:center; padding:10px; margin:0; }
+        h1 { color:#00ff88; margin:10px; font-size:24px; }
+        .health-bar { width:90%; height:30px; background:#333; border:2px solid #fff; margin:10px auto; border-radius:10px; }
+        .health-fill { height:100%; background:linear-gradient(90deg, #ff0000, #00ff00); width:100%; transition:0.3s; border-radius:8px; }
+        .player { margin:15px 0; }
+        button { font-size:16px; padding:12px 20px; margin:5px; border:none; border-radius:10px; font-weight:bold; }
+        .punch { background:#ff4444; color:white; }
+        .kick { background:#4444ff; color:white; }
+        .block { background:#ffaa00; color:black; }
+        .reset { background:#00ff88; color:black; margin-top:15px; width:80%; }
+        #winner { font-size:24px; color:#ffaa00; margin:15px; font-weight:bold; }
+        #turn { font-size:18px; color:#00ff88; margin:10px; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>👊 META AI FIGHTING 👊</h1>
-        <p>Pakistan ki Pehli Mobile Fighting Game</p>
-        <p>Made by Amin | Jhawarian, Punjab</p>
+    <h1>🇵🇰 META AI FIGHTING 🇵🇰</h1>
+    <p>Pakistan ki Pehli Mobile Fighting Game - FREE</p>
+    <p>Made by Amin | Jhawarian, Punjab</p>
+    
+    <div class="player">
+        <h2>PLAYER 1: <span id="p1hp">100</span> HP</h2>
+        <div class="health-bar"><div class="health-fill" id="p1bar"></div></div>
     </div>
     
-    <h2>Game Features:</h2>
-    <button class="btn">PUNCH 👊</button>
-    <button class="btn">KICK 🦵</button>
-    <button class="btn">BLOCK 🛡️</button>
+    <div class="player">
+        <h2>PLAYER 2: <span id="p2hp">100</span> HP</h2>
+        <div class="health-bar"><div class="health-fill" id="p2bar"></div></div>
+    </div>
     
-    <br>
-    <button class="btn download">📱 DOWNLOAD APK - free</button>
+    <div id="turn">Player 1 ki Turn</div>
     
-    <p style="margin-top:40px; font-size:14px; color:#888;">
-        Business ke liye WhatsApp kare
-    </p>
+    <button class="punch" onclick="attack('punch')">👊 PUNCH -10</button>
+    <button class="kick" onclick="attack('kick')">🦵 KICK -20</button>
+    <button class="block" onclick="block()">🛡️ BLOCK</button>
+    
+    <div id="winner"></div>
+    <button class="reset" onclick="resetGame()">🔄 NAYI GAME</button>
+
+    <script>
+        let p1 = 100, p2 = 100, turn = 1, blocking = 0, gameOver = false;
+        
+        function updateUI() {
+            document.getElementById('p1hp').innerText = p1;
+            document.getElementById('p2hp').innerText = p2;
+            document.getElementById('p1bar').style.width = p1 + '%';
+            document.getElementById('p2bar').style.width = p2 + '%';
+            document.getElementById('turn').innerText = gameOver ? 'Game Khatam' : 'Player ' + turn + ' ki Turn';
+        }
+        
+        function attack(type) {
+            if(gameOver) return;
+            let dmg = type === 'punch' ? 10 : 20;
+            if(blocking !== turn && blocking !== 0) dmg = 0;
+            blocking = 0;
+            
+            if(turn === 1) {
+                p2 -= dmg; if(p2 < 0) p2 = 0;
+                turn = 2;
+            } else {
+                p1 -= dmg; if(p1 < 0) p1 = 0;
+                turn = 1;
+            }
+            checkWinner();
+            updateUI();
+        }
+        
+        function block() {
+            if(gameOver) return;
+            blocking = turn;
+            turn = turn === 1 ? 2 : 1;
+            updateUI();
+        }
+        
+        function checkWinner() {
+            if(p1 <= 0) {
+                document.getElementById('winner').innerText = '🏆 PLAYER 2 JEET GAYA!';
+                gameOver = true;
+            }
+            if(p2 <= 0) {
+                document.getElementById('winner').innerText = '🏆 PLAYER 1 JEET GAYA!';
+                gameOver = true;
+            }
+        }
+        
+        function resetGame() {
+            p1 = 100; p2 = 100; turn = 1; blocking = 0; gameOver = false;
+            document.getElementById('winner').innerText = '';
+            updateUI();
+        }
+        updateUI();
+    </script>
 </body>
 </html>
